@@ -1,0 +1,29 @@
+
+#footer{ 
+	background-color: #333333;
+}
+
+#footerText{ 
+	color: white;
+}
+
+.contentImage{ 
+	width: 18em;
+	height: 18em;
+}
+
+#consortiumMembers{ 
+	font-size: 17px;
+}
+
+#programOfficers{ 
+	font-size: 17px;
+}
+
+#principalInvestigators{ 
+	font-size: 17px;
+}
+
+.minions{ 
+	font-size: 14.5px;
+}
