@@ -24,10 +24,149 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+
+
 </head>
 
 <body>
+  <!-- Added by Deepak - Dec 04, 2017 -->
+  <!-- added by Deepak Purushotham, Dec 04, 2017 -->
+  <script src="https://unpkg.com/react@16.0.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.0.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/prop-types@15.6.0/prop-types.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+  <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+  <!--[end block]-->
+  <script type="text/babel">
+  // import FILES from '../dict/files_403_has_32_extra.json'     <------ this has to come via ajax
 
+  const {PieChart, Pie, Sector, Cell} = window.Recharts;
+  const userLab = {
+    "tikonnek": "David Aylor, NCSU",
+    "rygielch": "Dana Dolinoy, UMich",
+    "yeminlan": "Marisa Bartolomei, UPenn"
+  };
+
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
+  class SimplePieChart extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        activeIndex: 0
+      }
+    }
+
+    onPieEnter = (data, index) => {
+      this.setState({activeIndex: index});
+    }
+
+    render() {
+
+      // const { data } = this.props
+
+      let dataShow = []
+      // for (let item of data) {
+      //   let tmp = {}
+      //   tmp['name'] = userLab[item.key]
+      //   tmp['value'] = item.values.length
+      //   dataShow.push(tmp)
+      // }
+
+      dataShow = [{"name":"David Aylor, NCSU","value":12},{"name":"Dana Dolinoy, UMich","value":285},{"name":"Marisa Bartolomei, UPenn","value":74}];
+
+      const renderActiveShape = (props) => {
+
+        const RADIAN = Math.PI / 180;
+        const {
+          cx,
+          cy,
+          midAngle,
+          innerRadius,
+          outerRadius,
+          startAngle,
+          endAngle,
+          fill,
+          // payload,
+          // percent,
+          name,
+          value
+        } = props;
+        const sin = Math.sin(-RADIAN * midAngle);
+        const cos = Math.cos(-RADIAN * midAngle);
+        const sx = cx + (outerRadius + 10) * cos;
+        const sy = cy + (outerRadius + 10) * sin;
+        const mx = cx + (outerRadius + 30) * cos;
+        const my = cy + (outerRadius + 30) * sin;
+        const ex = mx + (cos >= 0
+          ? 1
+          : -1) * 22;
+        const ey = my;
+        const textAnchor = cos >= 0
+          ? 'start'
+          : 'end';
+
+        return (
+          <g>
+            {/* <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>{name}</text> */}
+            <Sector cx={cx} cy={cy}
+              innerRadius={innerRadius}
+              outerRadius={outerRadius}
+              startAngle={startAngle}
+              endAngle={endAngle}
+              fill={fill}/>
+            <Sector cx={cx} cy={cy}
+              startAngle={startAngle}
+              endAngle={endAngle}
+              innerRadius={outerRadius + 6}
+              outerRadius={outerRadius + 10}
+              fill={fill}/>
+            <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none"/>
+            <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none"/>
+            <text x={ex + (cos >= 0
+              ? 1
+              : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${name}`}</text>
+            <text x={ex + (cos >= 0
+              ? 1
+              : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
+              {`${value}`}
+            </text>
+          </g>
+        );
+      };
+
+      return (
+        <PieChart width={650} height={140}>
+          <Pie
+            dataKey="value"
+            activeIndex={this.state.activeIndex}
+            activeShape={renderActiveShape}
+            data={dataShow} cx={300} cy={120}
+            startAngle={180} endAngle={0}
+            innerRadius={60} outerRadius={80}
+            fill="#8884d8" paddingAngle={5}
+            onMouseEnter={this.onPieEnter}>
+            { dataShow.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>) }
+          </Pie>
+        </PieChart>
+      );
+    }
+  }
+
+  class App extends React.Component {
+    render() {
+      return (
+          <SimplePieChart />
+      )
+    }
+  }
+
+  ReactDOM.render(
+    <App />,
+    document.getElementById('root'),
+  )
+  </script>
+  <!-- End block : dpuru -->
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -53,7 +192,7 @@
                             <li><a href="about.html">About</a></li>
                             <li class="divider"></li>
                             <li><a href="https://www.niehs.nih.gov/research/supported/health/envepi/target/index.cfm" target="_blank">NIEHS TaRGET Program</a></li>
-                            <li><a href="https://commonfund.nih.gov/4Dnucleome/FundedResearch" target="_blank">Funded Research</a></li>
+                            <li><a href="https://www.niehs.nih.gov/research/supported/health/envepi/" target="_blank">Funded Research</a></li>
                         </ul>
                     </li>
                     <li>
@@ -63,16 +202,16 @@
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">Resources<b class="caret"></b></a>
                         <ul class="dropdown-menu dropdown-menu-left">
                             <li><a href="policies.html">Policies</a></li>
-                            <li><a href="policies.html">Publications</a></li>
-                            <li><a href="#">Software</a></li>
+                            <li><a href="publications.html">Publications</a></li>
+                            <li><a href="software.html">Software</a></li>
                         </ul>
                     </li>
 		    <li class="dropdown">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">Data<b class="caret"></b></a>
                         <ul class="dropdown-menu dropdown-menu-left">
-                    	    <li> <a href="http://meta.targetepigenomics.org/">Accession Registry</a></li>
-                    	    <li> <a href="http://submit.targetepigenomics.org/">Submission Pipeline</a></li>
-                            <li><a href="http://dcc.targetepigenomics.org/">Data Portal</a></li>
+                    	    <li> <a href="https://meta.target.wustl.edu/">Accession Registry</a></li>
+                    	    <li> <a href="https://submit.target.wustl.edu/">Submission Pipeline</a></li>
+                            <li><a href="https://dcc.target.wustl.edu/">Data Portal</a></li>
                         </ul>
                     </li>
                     <li>
@@ -105,7 +244,7 @@
             <div class="col-lg-12">
                 <h2>Purpose</h2>
                 <p>
-                The TaRGET (Toxicant Exposures and Responses by Genomic and Epigenomic Regulators of Transcription) Program is a research consortium funded by the National Institute of Environmental Health Sciences (NIEHS). The goal of the collaboration is to address the role of environmental exposures in disease pathogenesis as a function of epigenome perturbation, including understanding the environmental control of epigenetic mechanisms and assessing the utility of surrogate tissue analysis in mouse models of disease-relevant environmental exposures. 
+                The TaRGET (Toxicant Exposures and Responses by Genomic and Epigenomic Regulators of Transcription) Program is a research consortium funded by the National Institute of Environmental Health Sciences (NIEHS). The goal of the collaboration is to address the role of environmental exposures in disease pathogenesis as a function of epigenome perturbation, including understanding the environmental control of epigenetic mechanisms and assessing the utility of surrogate tissue analysis in mouse models of disease-relevant environmental exposures.
                 </p>
                 <p>
                     <a class="btn btn-primary btn-md" href="about.html">Learn More &raquo;</a>
@@ -128,32 +267,36 @@
             </div>
 -->
         </div> <!-- End Row -->
-    </div> <!-- End Container --> 
+    </div> <!-- End Container -->
     <hr>
     <div class="container-fluid" id="mainContent">
         <div class="row">
             <br>
-            <div class="col-sm-4 text-center col-sm-offset-2">
-                <a href="#">
+            <div class="col-sm-2 text-center col-sm-offset-2">
+                <a href="https://dcc.target.wustl.edu">
                     <img class="img-responsive img-center contentImage" src="img/dp.png" alt="">
                     <br>
                     <div class="btn btn-warning btn-lg">Launch Data Portal</div>
                 </a>
-                
+
+            </div>
+            <div class="col-sm-4 text-center">
+              <div id="root" style="margin-top: 50px"></div>
+              <div style="margin-bottom: 20px"><h1>375</h1></div>
+              <div><h3>Data submitted / Group</h3></div>
             </div>
 
-            <div class="col-sm-4 text-center">
+            <div class="col-sm-2 text-center">
                 <a href="about.html">
                     <img class="img-responsive img-center contentImage" src="img/con.jpg" alt="">
                     <br>
-                    <div class="btn btn-warning btn-lg">Meet the Consortium</div> 
+                    <div class="btn btn-warning btn-lg">Meet the Consortium</div>
                 </a>
-            </div> 
+            </div>
             <br>
-            
+
         </div><!-- End Row -->
-    <br>  
-    </div><!-- End Container --> 
+    </div><!-- End Container -->
 
     <hr>
     <br>
@@ -162,14 +305,22 @@
             <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading"><h3>Newsfeed: </h3></div>
-                    <div class="panel-body">May 2-4, 2016: The kick-off meeting of the TaRGET II consortium was held at NIEHS.</div>
+                    <div class="panel-body lead">
+                        <ul>
+                            <li>Aug 9, 2017: The tutorial for batch upload of metadata is <a href="http://submissionui.readthedocs.io/" target="_blank">online</a> now.</li>
+                            <li>Jun 7-8, 2017: The TaRGET II consortium met at NIEHS (<a href="http://target.wustl.edu/wiki/index.php/Meetings_2017#Jun_7-8_2017" target="_blank">minutes</a>). </li>
+                            <li>Dec 5, 2016: The TaRGET II consortium meeting was held at NIEHS (<a href="http://target.wustl.edu/wiki/index.php/Meetings_2016#December_5_2016" target="_blank">minutes</a>). </li>
+                            <li>Oct 11, 2016: The tutorial for uploading data is <a href="http://submissionui.readthedocs.io/" target="_blank">online</a> now.</li>
+                            <li>May 2-4, 2016: The kick-off meeting of the TaRGET II consortium was held at NIEHS.</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </div><!-- End Container --> 
+    </div><!-- End Container -->
     <br>
         <!-- Footer -->
-    <div class="container-fluid" id="footer">    
+    <div class="container-fluid" id="footer">
             <footer>
                 <div class="row">
                     <div class="col-lg-12">
@@ -187,7 +338,6 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
-
 </body>
 
 </html>
